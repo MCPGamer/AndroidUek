@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ch.duartemendes.paircade">
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/paircade_logo"
@@ -9,16 +13,17 @@
         android:roundIcon="@mipmap/paircade_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CreateLobbyActivity">
+        <activity android:name=".ChooseGameActivity"></activity>
+        <activity android:name=".JoinLobbyActivity" />
+        <activity android:name=".MainMenuActivity" />
+        <activity android:name=".ChooseNameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CreateLobbyActivity" />
     </application>
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

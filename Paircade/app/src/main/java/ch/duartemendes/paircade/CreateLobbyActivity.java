@@ -47,8 +47,10 @@ public class CreateLobbyActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    String name = device.getName() + "\n" + device.getAddress();
-                    newDevicesNames.add(name);
+                    if(device.getName() != null){
+                        String name = device.getName() + "\n" + device.getAddress();
+                        newDevicesNames.add(name);
+                    }
                 }
 
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -92,10 +94,10 @@ public class CreateLobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_createlobby);
 
         // Add Icon to Bar at top of screen
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
-        actionBar.setIcon(R.mipmap.paircade_logo);
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.paircade_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        
         checkLocationPermission();
         checkBluetoothPermission();
         checkBluetoothAdminPermission();
