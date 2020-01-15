@@ -85,17 +85,17 @@ lint/tmp/
 # lint/reports/
 
 
-paircade/*.iml
-paircade/.gradle
-paircade/local.properties
-paircade/.idea/caches
-paircade/.idea/libraries
-paircade/.idea/modules.xml
-paircade/.idea/workspace.xml
-paircade/.idea/navEditor.xml
-paircade/.idea/assetWizardSettings.xml
-paircade/.DS_Store
-paircade/build
-paircade/captures
-paircade.externalNativeBuild
-paircade.cxx
+Paircade/*.iml
+Paircade/.gradle
+Paircade/local.properties
+Paircade/.idea/caches
+Paircade/.idea/libraries
+Paircade/.idea/modules.xml
+Paircade/.idea/workspace.xml
+Paircade/.idea/navEditor.xml
+Paircade/.idea/assetWizardSettings.xml
+Paircade/.DS_Store
+Paircade/build
+Paircade/captures
+Paircade/.externalNativeBuild
+Paircade/.cxx
