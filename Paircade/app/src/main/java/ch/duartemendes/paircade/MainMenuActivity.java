@@ -28,12 +28,12 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     public void goToChooseGame(View view) {
-        Intent mainMenuScreen = new Intent(this, MainMenuActivity.class);
-        startActivity(mainMenuScreen);
+        Intent chooseGameScreen = new Intent(this, ChooseGameActivity.class);
+        startActivity(chooseGameScreen);
     }
 
     public void goToJoinLobby(View view) {
-        Intent mainMenuScreen = new Intent(this, JoinLobbyActivity.class);
-        startActivity(mainMenuScreen);
+        Intent joinLobbyScreen = new Intent(this, JoinLobbyActivity.class);
+        startActivity(joinLobbyScreen);
     }
 }

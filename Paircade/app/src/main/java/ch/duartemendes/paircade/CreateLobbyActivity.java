@@ -2,7 +2,9 @@ package ch.duartemendes.paircade;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +25,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.Set;
+
+import ch.duartemendes.paircade.data.PaircadePersistedData;
 
 public class CreateLobbyActivity extends AppCompatActivity {
 
@@ -48,8 +52,18 @@ public class CreateLobbyActivity extends AppCompatActivity {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
                     if(device.getName() != null){
+                        boolean containsAlready = false;
                         String name = device.getName() + "\n" + device.getAddress();
-                        newDevicesNames.add(name);
+
+                        for(int i = 0; i < newDevicesNames.getCount(); i++){
+                            if(newDevicesNames.getItem(i).equals(name)){
+                                containsAlready = true;
+                            }
+                        }
+
+                        if(!containsAlready){
+                            newDevicesNames.add(name);
+                        }
                     }
                 }
 
@@ -78,6 +92,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
             try {
                 Log.d("Connection to user", "Connecting");
                 device.createBond();
+                // device.connectGatt() -- Build connection and Commemecate
                 Log.d("Connection to user", "Connected");
             } catch (SecurityException e) {
                 e.printStackTrace();
@@ -97,7 +112,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.paircade_logo);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
-        
+
         checkLocationPermission();
         checkBluetoothPermission();
         checkBluetoothAdminPermission();
@@ -162,6 +177,10 @@ public class CreateLobbyActivity extends AppCompatActivity {
 
     private void checkConnected(){
         if(checkBluetoothPermission() && checkBluetoothAdminPermission()){
+            PaircadePersistedData.PaircadeDataHelper dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
+            bluetoothAdapter.setName(dbHelper.getUsername());
+            bluetoothAdapter.enable();
+
             doDiscovery();
 
             // Get a set of currently paired devices

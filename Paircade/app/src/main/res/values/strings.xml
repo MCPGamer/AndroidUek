@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Paircade</string>
     <string name="no_devices">No Devices</string>
+    <string name="game_types">Game Type</string>
+    <string name="tic_tac_toe">Tic Tac Toe</string>
+    <string name="higher_lower">Higher Lower Game</string>
 </resources>
