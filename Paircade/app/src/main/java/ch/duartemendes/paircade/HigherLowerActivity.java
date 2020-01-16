@@ -48,6 +48,7 @@ public class HigherLowerActivity extends AppCompatActivity {
 
     private String currentPlayer;
     private int currentStreak;
+    private int currentPlayerCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +88,7 @@ public class HigherLowerActivity extends AppCompatActivity {
         //TODO: Let Host only initialize this stuff
         tries = new HashMap<>();
         currentStreak = 0;
+        currentPlayerCount = 0;
 
         if(players == null){
             // Singleplayer
@@ -94,7 +96,11 @@ public class HigherLowerActivity extends AppCompatActivity {
 
             tries.put(currentPlayer, 0);
         } else {
+            // Host go First
+            ArrayList<String> oldPlayers = players;
+            players = new ArrayList<>();
             players.add(dbHelper.getUsername());
+            players.addAll(oldPlayers);
 
             currentPlayer = players.get(0);
             for(String username : players){
@@ -351,7 +357,13 @@ public class HigherLowerActivity extends AppCompatActivity {
     public void processCorrectGuess(){
         if(currentStreak == 4){
             if(playerMode.equals(getString(R.string.multi))){
-                //TODO: Next players turn
+                if(currentPlayerCount < (players.size() - 1)){
+                    currentPlayerCount += 1;
+                    currentStreak = 0;
+                    currentPlayer = players.get(currentPlayerCount);
+                } else {
+                    goToEndScreen();
+                }
             } else {
                 goToEndScreen();
             }

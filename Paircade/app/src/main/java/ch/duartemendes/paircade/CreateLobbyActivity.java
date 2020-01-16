@@ -367,7 +367,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
         }
     }
 
-    public void startGame(View view) { // TODO: Fix bluetooth for this, then make Joining players too switch screen
+    public void startGame(View view) { // TODO: Fix bluetooth for this, then make Joining players also switch screen
         if (gamemode != null) {
             Intent gameScreen = createGameIntent();
             gameScreen.putExtra(getString(R.string.player_mode), getString(R.string.multi));
