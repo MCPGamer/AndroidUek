@@ -2,9 +2,10 @@ package ch.duartemendes.paircade;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
@@ -14,17 +15,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.Set;
-
 import ch.duartemendes.paircade.data.PaircadePersistedData;
 
 public class JoinLobbyActivity extends AppCompatActivity {
     private TextView waitInviteLabel;
     private TextView waitGamestartLabel;
 
-    private int MyLocationPermissionCode = 99;
-    private int MyBluetoothPermissionCode = 100;
-    private int MyBluetoothAdminPermissionCode = 101;
+    private int myLocationPermissionCode = 99;
+    private int myBluetoothPermissionCode = 100;
+    private int myBluetoothAdminPermissionCode = 101;
+    private int enableBluetooth = 102;
 
     private BluetoothAdapter bluetoothAdapter;
 
@@ -57,21 +57,39 @@ public class JoinLobbyActivity extends AppCompatActivity {
         }
     }
 
+    private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (getString(R.string.host_client).equals(action)) {
+                String data = intent.getStringExtra(getString(R.string.host_client));
+                waitGamestartLabel.setText(waitGamestartLabel.getText() + " | Invited by " + data);
+            }
+        }
+    };
+
     private void checkConnected(){
         if(checkBluetoothPermission() && checkBluetoothAdminPermission()){
             PaircadePersistedData.PaircadeDataHelper dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
             bluetoothAdapter.setName(dbHelper.getUsername());
 
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, enableBluetooth);
+            }
+
             Intent discoverableIntent =
                     new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
+
+            registerReceiver(gattUpdateReceiver, new IntentFilter(getString(R.string.host_client)));
         }
     }
 
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MyLocationPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, myLocationPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -87,7 +105,7 @@ public class JoinLobbyActivity extends AppCompatActivity {
 
     public boolean checkBluetoothPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, MyBluetoothPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, myBluetoothPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.BLUETOOTH)
@@ -103,7 +121,7 @@ public class JoinLobbyActivity extends AppCompatActivity {
 
     public boolean checkBluetoothAdminPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, MyBluetoothAdminPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, myBluetoothAdminPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.BLUETOOTH_ADMIN)

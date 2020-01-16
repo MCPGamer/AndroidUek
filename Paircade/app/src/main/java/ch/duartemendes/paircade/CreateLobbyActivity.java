@@ -2,9 +2,14 @@ package ch.duartemendes.paircade;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
+import android.bluetooth.BluetoothGattService;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,22 +24,30 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.Set;
 
+import ch.duartemendes.paircade.data.BluetoothService;
 import ch.duartemendes.paircade.data.PaircadePersistedData;
 
 public class CreateLobbyActivity extends AppCompatActivity {
 
-    private int MyLocationPermissionCode = 99;
-    private int MyBluetoothPermissionCode = 100;
-    private int MyBluetoothAdminPermissionCode = 101;
+    private int myLocationPermissionCode = 99;
+    private int myBluetoothPermissionCode = 100;
+    private int myBluetoothAdminPermissionCode = 101;
+    private int enableBluetooth = 102;
+
+    private PaircadePersistedData.PaircadeDataHelper dbHelper;
+    private String gamemode;
 
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothGattServer bluetoothGattServer;
+    private BluetoothGatt bluetoothGatt;
+    private BluetoothManager bluetoothManager;
+    private BluetoothGattService bluetoothService;
 
     private ArrayAdapter<String> newDevicesNames;
     private ArrayAdapter<String> pairedDevicesNames;
@@ -51,17 +64,17 @@ public class CreateLobbyActivity extends AppCompatActivity {
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    if(device.getName() != null){
+                    if (device.getName() != null) {
                         boolean containsAlready = false;
                         String name = device.getName() + "\n" + device.getAddress();
 
-                        for(int i = 0; i < newDevicesNames.getCount(); i++){
-                            if(newDevicesNames.getItem(i).equals(name)){
+                        for (int i = 0; i < newDevicesNames.getCount(); i++) {
+                            if (newDevicesNames.getItem(i).equals(name)) {
                                 containsAlready = true;
                             }
                         }
 
-                        if(!containsAlready){
+                        if (!containsAlready) {
                             newDevicesNames.add(name);
                         }
                     }
@@ -77,7 +90,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
     };
 
     // Clicklistener for Pairing
-    private OnItemClickListener deviceClickListener= new OnItemClickListener() {
+    private OnItemClickListener deviceClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
             // Cancel discovery because it's costly and we're about to connect
             bluetoothAdapter.cancelDiscovery();
@@ -92,7 +105,11 @@ public class CreateLobbyActivity extends AppCompatActivity {
             try {
                 Log.d("Connection to user", "Connecting");
                 device.createBond();
-                // device.connectGatt() -- Build connection and Commemecate
+                bluetoothGatt = device.connectGatt(CreateLobbyActivity.this, false, gattCallback);
+                if(bluetoothService != null){
+                    bluetoothService.getCharacteristic(BluetoothService.UUID_CHARA_USERNAME).setValue(dbHelper.getUsername().getBytes());
+                    bluetoothGatt.readCharacteristic(bluetoothService.getCharacteristic(BluetoothService.UUID_CHARA_USERNAME));
+                }
                 Log.d("Connection to user", "Connected");
             } catch (SecurityException e) {
                 e.printStackTrace();
@@ -103,10 +120,53 @@ public class CreateLobbyActivity extends AppCompatActivity {
         }
     };
 
+    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            broadcastUpdate(getString(R.string.host_client), characteristic);
+        }
+
+        @Override
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            broadcastUpdate(getString(R.string.host_client), characteristic);
+        }
+    };
+
+    private final BluetoothGattServerCallback gattServerCallback = new BluetoothGattServerCallback() {
+        @Override
+        public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic) {
+            broadcastUpdate(getString(R.string.host_client), characteristic);
+        }
+
+        @Override
+        public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId, BluetoothGattCharacteristic characteristic, boolean preparedWrite, boolean responseNeeded, int offset, byte[] value) {
+            broadcastUpdate(getString(R.string.host_client), characteristic);
+        }
+    };
+
+    private void broadcastUpdate(final String action,
+                                 final BluetoothGattCharacteristic characteristic) {
+        final Intent intent = new Intent(action);
+
+        final byte[] data = characteristic.getValue();
+        if (data != null && data.length > 0) {
+            final StringBuilder stringBuilder = new StringBuilder(data.length);
+            for (byte byteChar : data)
+                stringBuilder.append(String.format("%02X ", byteChar));
+            intent.putExtra(getString(R.string.host_client), new String(data) + "\n" +
+                    stringBuilder.toString());
+        }
+
+        sendBroadcast(intent);
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createlobby);
+
+        if()
 
         // Add Icon to Bar at top of screen
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -116,6 +176,8 @@ public class CreateLobbyActivity extends AppCompatActivity {
         checkLocationPermission();
         checkBluetoothPermission();
         checkBluetoothAdminPermission();
+
+        dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
 
         // Init Array Adapters
         newDevicesNames = new ArrayAdapter<String>(this, R.layout.device_name);
@@ -145,8 +207,13 @@ public class CreateLobbyActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Your phone aint got bluetooth otherwise
-        if(bluetoothAdapter != null){
+        if (bluetoothAdapter != null) {
             checkConnected();
+
+            bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+            bluetoothGattServer = bluetoothManager.openGattServer(CreateLobbyActivity.this, gattServerCallback);
+            bluetoothService = BluetoothService.createService();
+            bluetoothGattServer.addService(bluetoothService);
         }
     }
 
@@ -175,11 +242,15 @@ public class CreateLobbyActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void checkConnected(){
-        if(checkBluetoothPermission() && checkBluetoothAdminPermission()){
+    private void checkConnected() {
+        if (checkBluetoothPermission() && checkBluetoothAdminPermission()) {
             PaircadePersistedData.PaircadeDataHelper dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
             bluetoothAdapter.setName(dbHelper.getUsername());
-            bluetoothAdapter.enable();
+
+            if (!bluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, enableBluetooth);
+            }
 
             doDiscovery();
 
@@ -202,7 +273,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
 
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MyLocationPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, myLocationPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -218,7 +289,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
 
     public boolean checkBluetoothPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, MyBluetoothPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, myBluetoothPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.BLUETOOTH)
@@ -234,7 +305,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
 
     public boolean checkBluetoothAdminPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, MyBluetoothAdminPermissionCode);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, myBluetoothAdminPermissionCode);
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.BLUETOOTH_ADMIN)
@@ -246,5 +317,20 @@ public class CreateLobbyActivity extends AppCompatActivity {
         } else {
             return true;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        bluetoothGatt.disconnect();
+        bluetoothGattServer.close();
+        super.onStop();
+    }
+
+    public void startGameSolo(View view){
+        if()
+    }
+
+    public void startGame(View view){
+
     }
 }

@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="27dp"
         android:text="Verbundene Benutzer:"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
     <ListView
         android:id="@+id/viewNewDevices"
         android:layout_width="379dp"
-        android:layout_height="228dp"
+        android:layout_height="224dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3">
@@ -50,10 +50,21 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="171dp"
+        android:layout_height="47dp"
+        android:onClick="startGame"
         android:text="Spiel Starten"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewPairedDevices" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:onClick="startGameSolo"
+        android:text="Spiel alleine Starten"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewPairedDevices" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

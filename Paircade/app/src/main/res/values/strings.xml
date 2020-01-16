@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Paircade</string>
     <string name="no_devices">No Devices</string>
+    <string name="host_client">Datatransfer Host to Client</string>
+    <string name="client_host">Datatransfer Client to Host</string>
     <string name="game_types">Game Type</string>
     <string name="tic_tac_toe">Tic Tac Toe</string>
     <string name="higher_lower">Higher Lower Game</string>
