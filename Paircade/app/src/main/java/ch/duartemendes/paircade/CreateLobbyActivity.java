@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import ch.duartemendes.paircade.data.BluetoothService;
@@ -39,6 +40,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
     private int myBluetoothPermissionCode = 100;
     private int myBluetoothAdminPermissionCode = 101;
     private int enableBluetooth = 102;
+    private int myInternetPermissionCode = 103;
 
     private PaircadePersistedData.PaircadeDataHelper dbHelper;
     private String gamemode;
@@ -106,7 +108,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
                 Log.d("Connection to user", "Connecting");
                 device.createBond();
                 bluetoothGatt = device.connectGatt(CreateLobbyActivity.this, false, gattCallback);
-                if(bluetoothService != null){
+                if (bluetoothService != null) {
                     bluetoothService.getCharacteristic(BluetoothService.UUID_CHARA_USERNAME).setValue(dbHelper.getUsername().getBytes());
                     bluetoothGatt.readCharacteristic(bluetoothService.getCharacteristic(BluetoothService.UUID_CHARA_USERNAME));
                 }
@@ -166,7 +168,16 @@ public class CreateLobbyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createlobby);
 
-        if()
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                gamemode = null;
+            } else {
+                gamemode = extras.getString(getString(R.string.game_types));
+            }
+        } else {
+            gamemode = (String) savedInstanceState.getSerializable(getString(R.string.game_types));
+        }
 
         // Add Icon to Bar at top of screen
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -176,6 +187,7 @@ public class CreateLobbyActivity extends AppCompatActivity {
         checkLocationPermission();
         checkBluetoothPermission();
         checkBluetoothAdminPermission();
+        checkInternetPermission();
 
         dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
 
@@ -319,18 +331,60 @@ public class CreateLobbyActivity extends AppCompatActivity {
         }
     }
 
+    public boolean checkInternetPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, myInternetPermissionCode);
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.INTERNET)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
     @Override
     protected void onStop() {
-        bluetoothGatt.disconnect();
-        bluetoothGattServer.close();
+        if(bluetoothGatt != null){
+            bluetoothGatt.disconnect();
+        }
+
+        if(bluetoothGattServer != null){
+            bluetoothGattServer.close();
+        }
         super.onStop();
     }
 
-    public void startGameSolo(View view){
-        if()
+    public void startGameSolo(View view) {
+        if (gamemode != null) {
+            Intent gameScreen = createGameIntent();
+            gameScreen.putExtra(getString(R.string.player_mode), getString(R.string.solo));
+            startActivity(gameScreen);
+        }
     }
 
-    public void startGame(View view){
+    public void startGame(View view) { // TODO: Fix bluetooth for this, then make Joining players too switch screen
+        if (gamemode != null) {
+            Intent gameScreen = createGameIntent();
+            gameScreen.putExtra(getString(R.string.player_mode), getString(R.string.multi));
+            gameScreen.putExtra(getString(R.string.players), new ArrayList<String>()); // TODO: Add all Playernames except Host itself
+            startActivity(gameScreen);
+        }
+    }
 
+    private Intent createGameIntent() {
+        Intent intent = null;
+
+        if (getString(R.string.tic_tac_toe).equals(gamemode)) {
+            intent = new Intent(this, TicTacToeActivity.class);
+        } else if (getString(R.string.higher_lower).equals(gamemode)) {
+            intent = new Intent(this, HigherLowerActivity.class);
+        }
+
+        return intent;
     }
 }

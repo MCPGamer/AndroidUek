@@ -6,4 +6,12 @@
     <string name="game_types">Game Type</string>
     <string name="tic_tac_toe">Tic Tac Toe</string>
     <string name="higher_lower">Higher Lower Game</string>
+    <string name="player_mode">Player Mode</string>
+    <string name="solo">Singleplayer</string>
+    <string name="multi">Multiplayer</string>
+    <string name="players">Players</string>
+    <string name="lower"><![CDATA[<]]></string>
+    <string name="equals">=</string>
+    <string name="higher"><![CDATA[>]]></string>
+    <string name="winner">Winner</string>
 </resources>

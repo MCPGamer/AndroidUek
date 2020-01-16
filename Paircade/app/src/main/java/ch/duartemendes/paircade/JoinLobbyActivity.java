@@ -25,6 +25,7 @@ public class JoinLobbyActivity extends AppCompatActivity {
     private int myBluetoothPermissionCode = 100;
     private int myBluetoothAdminPermissionCode = 101;
     private int enableBluetooth = 102;
+    private int myInternetPermissionCode = 103;
 
     private BluetoothAdapter bluetoothAdapter;
 
@@ -47,6 +48,7 @@ public class JoinLobbyActivity extends AppCompatActivity {
         checkLocationPermission();
         checkBluetoothPermission();
         checkBluetoothAdminPermission();
+        checkInternetPermission();
 
         // Init Bluetooth Adapter
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -125,6 +127,22 @@ public class JoinLobbyActivity extends AppCompatActivity {
 
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.BLUETOOTH_ADMIN)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public boolean checkInternetPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, myInternetPermissionCode);
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.INTERNET)
                     != PackageManager.PERMISSION_GRANTED) {
                 return false;
             } else {

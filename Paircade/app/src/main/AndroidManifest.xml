@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -13,7 +14,10 @@
         android:roundIcon="@mipmap/paircade_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChooseGameActivity"></activity>
+        <activity android:name=".EndGameActivity"></activity>
+        <activity android:name=".TicTacToeActivity" />
+        <activity android:name=".HigherLowerActivity" />
+        <activity android:name=".ChooseGameActivity" />
         <activity android:name=".JoinLobbyActivity" />
         <activity android:name=".MainMenuActivity" />
         <activity android:name=".ChooseNameActivity">
