@@ -10,7 +10,7 @@
         android:id="@+id/waitInviteLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
+        android:layout_marginStart="145dp"
         android:layout_marginTop="356dp"
         android:text="Waiting on Invite"
         app:layout_constraintStart_toStartOf="parent"
