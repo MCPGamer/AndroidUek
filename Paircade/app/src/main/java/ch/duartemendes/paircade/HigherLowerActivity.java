@@ -296,7 +296,6 @@ public class HigherLowerActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            setCard();
 
             if(isGuess){
                 if(getCardValue(lastCard) > getCardValue(newCard) && "Lower".equals(guess)){
@@ -314,13 +313,17 @@ public class HigherLowerActivity extends AppCompatActivity {
                     int triesBefore = tries.get(currentPlayer) + 1;
                     tries.put(currentPlayer, triesBefore);
 
-                    lastCard = newCard;
+                    lastCard = null;
                     newCard = null;
+
+                    new DeckTask().execute();
                 }
 
                 triesLabel.setText(tries.get(currentPlayer).toString());
                 streakLabel.setText(String.valueOf(currentStreak));
             }
+
+            setCard();
         }
     }
 
@@ -361,6 +364,8 @@ public class HigherLowerActivity extends AppCompatActivity {
                     currentPlayerCount += 1;
                     currentStreak = 0;
                     currentPlayer = players.get(currentPlayerCount);
+
+                    new DeckTask().execute();
                 } else {
                     goToEndScreen();
                 }
