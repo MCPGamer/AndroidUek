@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -56,6 +57,8 @@ public class CreateLobbyActivity extends AppCompatActivity {
 
     private ListView newDevicesListView;
     private ListView pairedDevicesListView;
+
+    private Button multiplayerButton;
 
     // Receiver to add new Found devices
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -189,6 +192,8 @@ public class CreateLobbyActivity extends AppCompatActivity {
         checkBluetoothAdminPermission();
         checkInternetPermission();
 
+        multiplayerButton = findViewById(R.id.startMulti);
+
         dbHelper = new PaircadePersistedData.PaircadeDataHelper(getBaseContext());
 
         // Init Array Adapters
@@ -226,6 +231,17 @@ public class CreateLobbyActivity extends AppCompatActivity {
             bluetoothGattServer = bluetoothManager.openGattServer(CreateLobbyActivity.this, gattServerCallback);
             bluetoothService = BluetoothService.createService();
             bluetoothGattServer.addService(bluetoothService);
+
+            if(gamemode.equals(getString(R.string.tic_tac_toe))){
+                // Tic Tac Toe nur mit 2 Spieler, sprich Host und 1 Client
+                if(pairedDevicesNames.getCount() == 1){
+                    multiplayerButton.setEnabled(true);
+                } else {
+                    multiplayerButton.setEnabled(false);
+                }
+            } else {
+                multiplayerButton.setEnabled(true);
+            }
         }
     }
 

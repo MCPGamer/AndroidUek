@@ -49,9 +49,10 @@
     </ListView>
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/startMulti"
         android:layout_width="171dp"
         android:layout_height="47dp"
+        android:enabled="false"
         android:onClick="startGame"
         android:text="Spiel Starten"
         app:layout_constraintEnd_toEndOf="parent"

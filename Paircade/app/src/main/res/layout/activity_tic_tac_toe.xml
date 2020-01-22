@@ -6,4 +6,203 @@
     android:layout_height="match_parent"
     tools:context=".TicTacToeActivity">
 
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="232dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="90dp"
+        android:text="GOAL: Get 3 in a row"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/TopLeft"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="38dp"
+        android:background="#D5D5D5"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onFieldClick"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/TopMid"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="24dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/TopRight"
+        app:layout_constraintStart_toEndOf="@+id/TopLeft"
+        app:layout_constraintTop_toBottomOf="@+id/textView10"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/TopRight"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="38dp"
+        android:layout_marginEnd="88dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/MidLeft"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="23dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TopLeft"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/MidMid"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="24dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/MidRight"
+        app:layout_constraintStart_toEndOf="@+id/MidLeft"
+        app:layout_constraintTop_toBottomOf="@+id/TopMid"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/MidRight"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="89dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TopRight"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/BottomMid"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="24dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintEnd_toStartOf="@+id/BottomRight"
+        app:layout_constraintStart_toEndOf="@+id/BottomLeft"
+        app:layout_constraintTop_toBottomOf="@+id/MidMid"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/BottomLeft"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="30dp"
+        android:background="#D5D5D5"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MidLeft"
+        android:onClick="onFieldClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAlignment="center"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/BottomRight"
+        android:layout_width="62dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="89dp"
+        android:background="#D5D5D5"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onFieldClick"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MidRight" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="232dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="89dp"
+        android:text="Current Player:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BottomMid" />
+
+    <TextView
+        android:id="@+id/currentPlayerLabel"
+        android:layout_width="232dp"
+        android:layout_height="17dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="90dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="106dp"
+        android:onClick="resetFields"
+        android:text="Unwinable, Reset Fields"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentPlayerLabel" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
